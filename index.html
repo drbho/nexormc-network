@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" />
+    <title>VortexMC Network</title>
+</head>
+<body class="bg-[#0b0e14] min-h-screen text-gray-200 font-sans">
+
+    <nav class="navbar bg-black/40 backdrop-blur-md border-b border-purple-900/20 px-4 md:px-20 sticky top-0 z-50">
+        <div class="flex-1 text-2xl font-black text-purple-500 tracking-tighter">
+            <a href="#" onclick="showPage('home')">VORTEX MC</a>
+        </div>
+        <div class="flex-none gap-2">
+            <a href="#" onclick="showPage('regolamento')" class="btn btn-ghost btn-sm">Regole</a>
+            <div class="dropdown dropdown-end">
+                <button class="btn btn-primary btn-sm bg-purple-600 border-none">Moduli</button>
+                <ul class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52 mt-4">
+                    <li><a href="#" onclick="showPage('form', 'YouTuber')">YouTuber</a></li>
+                    <li><a href="#" onclick="showPage('form', 'Streamer')">Streamer</a></li>
+                    <li><a href="#" onclick="showPage('form', 'Media')">Media</a></li>
+                    <li><a href="#" onclick="showPage('form', 'Supporto')">Supporto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content" class="p-8 max-w-5xl mx-auto">
+        </main>
+
+    <script>
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1454761432091721758/V6DIuub7nPx8VPHDXcQgillyp4cwI8CTJOLeJcNDTfabCzZ2EUjD1JQ5uyRF0sgblvph";
+
+        function showPage(page, type = '') {
+            const container = document.getElementById('main-content');
+            
+            if (page === 'home') {
+                container.innerHTML = `
+                    <div class="text-center py-20 animate-fade-in">
+                        <h1 class="text-8xl font-black mb-6 bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent italic">VORTEX</h1>
+                        <p class="text-xl mb-10 text-gray-400">Network Minecraft VortexMC - L'eccellenza nel gioco.</p>
+                        <button onclick="copyIP()" class="btn btn-lg btn-primary bg-purple-600 border-none px-12">PLAY.VORTEXMC.IT</button>
+                    </div>`;
+            } 
+            
+            else if (page === 'regolamento') {
+                container.innerHTML = `
+                    <h2 class="text-4xl font-black mb-8 text-purple-400">Regolamento</h2>
+                    <div class="bg-base-200 p-6 rounded-2xl border border-purple-900/20">
+                        <p class="mb-4"><b>1. Comportamento:</b> Rispetto per tutti. No spam o tossicità.</p>
+                        <p><b>2. Cheat:</b> L'uso di hack porta al ban permanente.</p>
+                    </div>`;
+            }
+
+            else if (page === 'form') {
+                container.innerHTML = `
+                    <div class="max-w-xl mx-auto bg-base-200 p-8 rounded-3xl border border-purple-500/10">
+                        <h2 class="text-3xl font-black mb-6 text-purple-400 uppercase">Modulo ${type}</h2>
+                        <form onsubmit="sendToDiscord(event, '${type}')" class="grid gap-4">
+                            <input type="text" id="nick" placeholder="Il tuo Nickname" class="input input-bordered" required>
+                            <input type="text" id="disc" placeholder="Tag Discord (es. vortex#0000)" class="input input-bordered" required>
+                            <textarea id="msg" placeholder="Dettagli o Link social..." class="textarea textarea-bordered h-32" required></textarea>
+                            <button type="submit" id="btn-send" class="btn btn-primary bg-purple-600 border-none">INVIA CANDIDATURA</button>
+                        </form>
+                    </div>`;
+            }
+        }
+
+        async function sendToDiscord(event, type) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-send');
+            btn.innerText = "Invio in corso...";
+            btn.disabled = true;
+
+            const nick = document.getElementById('nick').value;
+            const disc = document.getElementById('disc').value;
+            const msg = document.getElementById('msg').value;
+
+            const payload = {
+                embeds: [{
+                    title: "🚀 NUOVO INVIO DAL SITO: " + type.toUpperCase(),
+                    color: 0x9333ea,
+                    fields: [
+                        { name: "Nickname", value: nick, inline: true },
+                        { name: "Discord", value: disc, inline: true },
+                        { name: "Messaggio/Link", value: msg }
+                    ],
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                alert("Inviato con successo allo Staff!");
+                showPage('home');
+            } catch (err) {
+                alert("Errore nell'invio. Riprova.");
+                btn.disabled = false;
+                btn.innerText = "INVIA CANDIDATURA";
+            }
+        }
+
+        function copyIP() {
+            navigator.clipboard.writeText('play.vortexmc.it');
+            alert("IP Copiato: play.vortexmc.it");
+        }
+
+        // Carica la home all'inizio
+        showPage('home');
+    </script>
+</body>
+</html>
